@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@import "tailwindcss/preflight.css" layer(base);
+
+/* Define the dark mode variant */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Define theme variables */
+@theme {
+  --color-background: #ffffff;
+  --color-text-primary: #000000;
+  --color-text-secondary: #59738c;
+  --color-input:#E8EDF2
+  --color-btn-primary: #367dc9
+  --color-btn-primary-hover: #135296
+
+}
+
+/* Define overrides for the dark variant */
+@layer base {
+  @variant dark {
+  --color-background: #0F172A;
+  --color-text-primary: #E2E8F0;
+  --color-text-secondary: #94A3B8;
+  --color-input: #1E293B;
+  --color-btn-primary: #3B82F6;
+  --color-btn-primary-hover: #2563EB;
+  }
+}
