@@ -1,4 +1,5 @@
 
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +9,7 @@ import Header from "../../components/shared/header";
 import StepProgress from "../../components/StepProgress";
 import DatePickerCalendar from "../../components/DatePickerCalendar";
 import NextButton from "../../components/next-btn";
+
 
 export default function TripFormStep1() {
   const navigate = useNavigate();
