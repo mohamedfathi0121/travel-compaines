@@ -1,6 +1,8 @@
 import "./App.css";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Trips from "./pages/Trips";
 import {ThemeProvider} from "./context/ThemeProvider";
 import TripFormStep1 from "./pages/add trip/step1";
 import TripFormStep2 from "./pages/add trip/step2";
@@ -9,7 +11,7 @@ import TripFormStep4 from "./pages/add trip/step4";
 function App() {
   return (
     <>
-      <ThemeProvider>
+      {/* <ThemeProvider>
         <BrowserRouter>
           <Routes>
  <Route path="/" element={<TripFormStep1 />} />
@@ -19,7 +21,8 @@ function App() {
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
-      <Toaster />
+      <Toaster /> */}
+      <Trips />
     </>
   );
 }

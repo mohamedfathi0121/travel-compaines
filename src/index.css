@@ -14,6 +14,8 @@
 
   /* --- Consolidated Button Colors --- */
   --color-button-primary: #367dc9;
+  --color-button-danger: #fb2c36;
+  --color-button-danger-hover: #8b0000;
   --color-button-primary-hover: #135296;
   --color-button-text: #e2e8f0;
 }
@@ -30,6 +32,8 @@
 
     /* --- Dark Mode Button Overrides --- */
     --color-button-primary: #369eff;
+    --color-button-danger: #fb2c36;
+    --color-button-danger-hover: #8b0000;
     --color-button-primary-hover: #2563eb;
     --color-button-text: #e2e8f0;
   }
