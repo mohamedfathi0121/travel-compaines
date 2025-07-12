@@ -2,6 +2,7 @@ import "./App.css";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Trips from "./pages/Trips";
+import CompanyProfile from "./pages/companyDetails";
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
         </BrowserRouter>
       </ThemeProvider>
       <Toaster /> */}
-      <Trips />
+      <CompanyProfile />
     </>
   );
 }
