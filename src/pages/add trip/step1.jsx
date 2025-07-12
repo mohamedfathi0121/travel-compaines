@@ -1,18 +1,19 @@
-
-
+// src/pages/add trip/step1.jsx
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { tripStep1Schema } from "../../validations/tripStep.schema";
+import { useTrip } from "../../context/TripContext";
+
 import Header from "../../components/shared/header";
 import StepProgress from "../../components/StepProgress";
 import DatePickerCalendar from "../../components/DatePickerCalendar";
 import NextButton from "../../components/next-btn";
 
-
 export default function TripFormStep1() {
   const navigate = useNavigate();
+  const { tripData, updateTripData } = useTrip();
 
   const {
     register,
@@ -23,17 +24,24 @@ export default function TripFormStep1() {
   } = useForm({
     resolver: zodResolver(tripStep1Schema),
     defaultValues: {
-      tripTitle: "",
-      description: "",
-      country: "",
-      city: "",
-      startDate: "",
-      endDate: "",
+      tripTitle: tripData.title || "",
+      description: tripData.description || "",
+      country: tripData.country || "",
+      city: tripData.city || "",
+      startDate: tripData.startDate || "",
+      endDate: tripData.endDate || "",
     },
   });
 
   const onSubmit = (data) => {
-    console.log("✅ Step 1 data:", data);
+    updateTripData({
+      title: data.tripTitle,
+      description: data.description,
+      country: data.country,
+      city: data.city,
+      startDate: data.startDate,
+      endDate: data.endDate,
+    });
     navigate("/step2");
   };
 
@@ -45,6 +53,7 @@ export default function TripFormStep1() {
         <h1 className="text-2xl font-bold mb-8">Basic Trip Information</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Trip Title */}
           <div className="flex flex-col">
             <label className="text-sm text-text-secondary mb-1">Trip Title</label>
             <input
@@ -55,6 +64,7 @@ export default function TripFormStep1() {
             {errors.tripTitle && <span className="text-red-500 text-xs mt-1">{errors.tripTitle.message}</span>}
           </div>
 
+          {/* Description */}
           <div className="flex flex-col md:col-span-2">
             <label className="text-sm text-text-secondary mb-1">Description</label>
             <textarea
@@ -65,6 +75,7 @@ export default function TripFormStep1() {
             {errors.description && <span className="text-red-500 text-xs mt-1">{errors.description.message}</span>}
           </div>
 
+          {/* Country */}
           <div className="flex flex-col">
             <label className="text-sm text-text-secondary mb-1">Country</label>
             <select
@@ -78,6 +89,7 @@ export default function TripFormStep1() {
             {errors.country && <span className="text-red-500 text-xs mt-1">{errors.country.message}</span>}
           </div>
 
+          {/* City */}
           <div className="flex flex-col">
             <label className="text-sm text-text-secondary mb-1">City</label>
             <select
@@ -91,6 +103,7 @@ export default function TripFormStep1() {
             {errors.city && <span className="text-red-500 text-xs mt-1">{errors.city.message}</span>}
           </div>
 
+          {/* Start Date */}
           <div className="flex flex-col">
             <label className="text-sm text-text-secondary mb-1">Start Date</label>
             <DatePickerCalendar
@@ -100,6 +113,7 @@ export default function TripFormStep1() {
             {errors.startDate && <span className="text-red-500 text-xs mt-1">{errors.startDate.message}</span>}
           </div>
 
+          {/* End Date */}
           <div className="flex flex-col">
             <label className="text-sm text-text-secondary mb-1">End Date</label>
             <DatePickerCalendar
@@ -109,6 +123,7 @@ export default function TripFormStep1() {
             {errors.endDate && <span className="text-red-500 text-xs mt-1">{errors.endDate.message}</span>}
           </div>
 
+          {/* Next Button */}
           <div className="md:col-span-2 flex justify-end mt-8">
             <NextButton type="submit">Next</NextButton>
           </div>
