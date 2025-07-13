@@ -5,12 +5,6 @@ import { companyStep4Schema } from '../../validations/auth.schema'; // Import yo
 import supabase  from '../../utils/supabase.js';
 import toast from 'react-hot-toast';
 
-// Helper function remains the same
-
-
-
-
-
 
 const CompanyStep4 = ({ prevStep, formData }) => {
     const { register, handleSubmit, formState: { errors } } = useForm({
