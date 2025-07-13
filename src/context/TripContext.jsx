@@ -1,30 +1,26 @@
+// src/context/TripContext.js
 import { createContext, useContext, useState } from "react";
 
 const TripContext = createContext();
 
 export const TripProvider = ({ children }) => {
-  const [tripData, setTripData] = useState({
-    // Step 1
-    title: "",
-    description: "",
-    country: "",
-    city: "",
-    startDate: "",
-    endDate: "",
+const [tripData, setTripData] = useState({
+  title: "",
+  description: "",
+  country: "",
+  city: "",
+  startDate: "",
+  endDate: "",
+  vrVideoUrl: "",         
+  photoUrls: [],          
+  locationURL: "",
+  availableTickets: "",
+priceSingle: "",
+priceDouble: "",
+priceTriple: "",
+ company_id: "",
+});
 
-    // Step 2
-    vrVideo: null,
-    photos: [],
-
-    // Step 3
-    locationURL: "",
-    availableTickets: "",
-
-    // Step 4
-    price: "",
-    priceInclude: [],
-    priceNotInclude: [],
-  });
 
   const updateTripData = (newData) => {
     setTripData((prev) => ({ ...prev, ...newData }));

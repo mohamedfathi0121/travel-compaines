@@ -1,19 +1,23 @@
-
-
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { tripStep1Schema } from "../../validations/tripStep.schema";
-import { useTrip } from "../../context/TripContext";
-
+import { getAllCountries, getCitiesByCountry } from "../../api/locationApi";
 import Header from "../../components/shared/header";
 import StepProgress from "../../components/StepProgress";
 import DatePickerCalendar from "../../components/DatePickerCalendar";
 import NextButton from "../../components/next-btn";
+import { useTrip } from "../../context/TripContext";
+import Select from "react-select";
 
 export default function TripFormStep1() {
   const navigate = useNavigate();
   const { tripData, updateTripData } = useTrip();
+
+  const [countries, setCountries] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [loadingCities, setLoadingCities] = useState(false);
 
   const {
     register,
@@ -32,6 +36,23 @@ export default function TripFormStep1() {
       endDate: tripData.endDate || "",
     },
   });
+
+  const selectedCountry = watch("country");
+
+  useEffect(() => {
+    getAllCountries().then(setCountries);
+  }, []);
+
+  useEffect(() => {
+    if (!selectedCountry) return;
+    setLoadingCities(true);
+    getCitiesByCountry(selectedCountry)
+      .then(setCities)
+      .finally(() => setLoadingCities(false));
+  }, [selectedCountry]);
+
+  const countryOptions = countries.map((c) => ({ value: c, label: c }));
+  const cityOptions = cities.map((c) => ({ value: c, label: c }));
 
   const onSubmit = (data) => {
     updateTripData({
@@ -59,7 +80,7 @@ export default function TripFormStep1() {
             <input
               {...register("tripTitle")}
               placeholder="e.g., Summer Vacation in Europe"
-              className="rounded-lg px-4 py-3 bg-input text-text-primary placeholder:text-text-secondary text-sm outline-none border border-input focus:border-btn-primary transition"
+              className="rounded-lg px-4 py-3 bg-input text-sm border border-input focus:border-btn-primary"
             />
             {errors.tripTitle && <span className="text-red-500 text-xs mt-1">{errors.tripTitle.message}</span>}
           </div>
@@ -70,36 +91,36 @@ export default function TripFormStep1() {
             <textarea
               {...register("description")}
               rows="4"
-              className="rounded-lg px-4 py-3 bg-input text-text-primary placeholder:text-text-secondary text-sm outline-none border border-input focus:border-btn-primary resize-none transition"
+              className="rounded-lg px-4 py-3 bg-input text-sm border border-input focus:border-btn-primary resize-none"
             />
             {errors.description && <span className="text-red-500 text-xs mt-1">{errors.description.message}</span>}
           </div>
 
-          {/* Country */}
+          
           <div className="flex flex-col">
             <label className="text-sm text-text-secondary mb-1">Country</label>
-            <select
-              {...register("country")}
-              className="rounded-lg px-4 py-3 bg-input text-text-primary text-sm outline-none border border-input focus:border-btn-primary transition"
-            >
-              <option value="">Select Country</option>
-              <option value="egypt">Egypt</option>
-              <option value="germany">Germany</option>
-            </select>
+            <Select
+              options={countryOptions}
+              value={countryOptions.find((opt) => opt.value === selectedCountry)}
+              onChange={(option) => setValue("country", option?.value || "", { shouldValidate: true })}
+              placeholder="Select Country"
+              className="text-sm"
+            />
             {errors.country && <span className="text-red-500 text-xs mt-1">{errors.country.message}</span>}
           </div>
 
-          {/* City */}
+        
           <div className="flex flex-col">
             <label className="text-sm text-text-secondary mb-1">City</label>
-            <select
-              {...register("city")}
-              className="rounded-lg px-4 py-3 bg-input text-text-primary text-sm outline-none border border-input focus:border-btn-primary transition"
-            >
-              <option value="">Select City</option>
-              <option value="cairo">Cairo</option>
-              <option value="berlin">Berlin</option>
-            </select>
+            <Select
+              options={cityOptions}
+              value={cityOptions.find((opt) => opt.value === watch("city"))}
+              onChange={(option) => setValue("city", option?.value || "", { shouldValidate: true })}
+              placeholder="Select City"
+              isDisabled={loadingCities || !selectedCountry}
+              className="text-sm"
+              isLoading={loadingCities}
+            />
             {errors.city && <span className="text-red-500 text-xs mt-1">{errors.city.message}</span>}
           </div>
 

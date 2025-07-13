@@ -1,51 +1,96 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { tripStep4Schema } from "../../validations/tripStep.schema";
 import Header from "../../components/shared/header";
 import StepProgress from "../../components/StepProgress";
 import NextButton from "../../components/next-btn";
+import { useTrip } from "../../context/TripContext";
+import supabase from "../../utils/supabase";
 
 export default function TripFormStep4() {
+  const { tripData, updateTripData } = useTrip();
+
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(tripStep4Schema),
     defaultValues: {
-      price: "",
-      inclusions: ["Hotel"],
-      exclusions: ["Flights"],
+      priceSingle: tripData.priceSingle || "",
+      priceDouble: tripData.priceDouble || "",
+      priceTriple: tripData.priceTriple || "",
+      inclusionsText: tripData.priceInclude || "",
+      exclusionsText: tripData.priceNotInclude || "",
     },
   });
 
-  const [newInclude, setNewInclude] = useState("");
-  const [newExclude, setNewExclude] = useState("");
-
-  const inclusions = watch("inclusions");
-  const exclusions = watch("exclusions");
-
-  const addInclusion = () => {
-    if (newInclude.trim()) {
-      setValue("inclusions", [...inclusions, newInclude], { shouldValidate: true });
-      setNewInclude("");
-    }
+const onSubmit = async (data) => {
+  const fullTrip = {
+    ...tripData,
+    priceSingle: data.priceSingle,
+    priceDouble: data.priceDouble,
+    priceTriple: data.priceTriple,
+    priceInclude: data.inclusionsText,
+    priceNotInclude: data.exclusionsText,
   };
 
-  const addExclusion = () => {
-    if (newExclude.trim()) {
-      setValue("exclusions", [...exclusions, newExclude], { shouldValidate: true });
-      setNewExclude("");
-    }
-  };
+  const {
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser();
 
-  const onSubmit = (data) => {
-    console.log("Step 4 Data:", data);
+  if (userError || !user) {
+    alert("Failed to get authenticated user.");
+    return;
+  }
+
+  fullTrip.company_id = user.id;
+  updateTripData(fullTrip);
+
+  const formData = new FormData();
+  Object.entries(fullTrip).forEach(([key, value]) => {
+    const finalKey = key;
+
+    if (key === "photos" && Array.isArray(value)) {
+      value.forEach((file) => formData.append("photos", file));
+    } else if (key === "photoUrls" && Array.isArray(value)) {
+      formData.append(finalKey, JSON.stringify(value));
+    } else {
+      formData.append(finalKey, value?.toString() || "");
+    }
+  });
+
+  console.log("📦 FormData being sent:");
+  for (const pair of formData.entries()) {
+    console.log(pair[0], "=>", pair[1]);
+  }
+
+  const accessToken = localStorage.getItem("access_token"); 
+
+  try {
+    const res = await fetch("https://iklzpmnhifxwgmqydths.supabase.co/functions/v1/create-trip", {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${accessToken}`, 
+      },
+    });
+
+    const resultText = await res.text();
+    console.log("Status:", res.status);
+    console.log("Response OK:", res.ok);
+    console.log("Raw response text:", resultText);
+
+    if (!res.ok) throw new Error(`Supabase Error: ${resultText}`);
     alert("Trip registered successfully!");
-  };
+  } catch (err) {
+    console.error(" Upload failed:", err.message);
+    alert("Error: " + err.message);
+  }
+};
+
 
   return (
     <>
@@ -54,82 +99,51 @@ export default function TripFormStep4() {
         <StepProgress step={4} />
         <h1 className="text-2xl font-bold mb-6">Pricing and Inclusions</h1>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Trip Price */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-text-secondary mb-1">
-              Trip Price (USD)
-            </label>
-            <input
-              type="number"
-              {...register("price")}
-              className="w-full rounded-lg px-4 py-3 bg-input text-text-primary placeholder:text-text-secondary text-sm outline-none border border-input focus:border-btn-primary transition"
-              placeholder="Enter trip price"
-            />
-            {errors.price && (
-              <span className="text-red-500 text-xs mt-1">{errors.price.message}</span>
-            )}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Prices */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {["Single", "Double", "Triple"].map((type) => (
+              <div key={type}>
+                <label className="block text-sm font-medium mb-1">{`${type} Room Price`}</label>
+                <input
+                  type="number"
+                  {...register(`price${type}`)}
+                  className="w-full rounded-lg px-4 py-3 bg-input text-sm border border-input"
+                />
+                {errors[`price${type}`] && (
+                  <p className="text-red-500 text-xs">
+                    {errors[`price${type}`]?.message}
+                  </p>
+                )}
+              </div>
+            ))}
           </div>
 
           {/* Inclusions */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-text-secondary mb-2">
-              What's Included
-            </label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                value={newInclude}
-                onChange={(e) => setNewInclude(e.target.value)}
-                className="flex-1 rounded-lg px-4 py-2 bg-input text-sm outline-none border border-input focus:border-btn-primary"
-                placeholder="e.g., Meals"
-              />
-              <button
-                type="button"
-                onClick={addInclusion}
-                className="px-4 py-2 bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover transition"
-              >
-                Add
-              </button>
-            </div>
-            <ul className="list-disc list-inside text-sm text-text-primary">
-              {inclusions.map((item, idx) => (
-                <li key={idx}>{item}</li>
-              ))}
-            </ul>
-            {errors.inclusions && (
-              <span className="text-red-500 text-xs mt-1">{errors.inclusions.message}</span>
+          <div>
+            <label className="block text-sm font-medium mb-2">What's Included</label>
+            <textarea
+              {...register("inclusionsText")}
+              rows={4}
+              className="w-full rounded-lg px-4 py-3 bg-input text-sm border border-input"
+              placeholder="Hotel, Meals, Tour guide..."
+            ></textarea>
+            {errors.inclusionsText && (
+              <p className="text-red-500 text-xs">{errors.inclusionsText.message}</p>
             )}
           </div>
 
           {/* Exclusions */}
-          <div className="mb-8">
-            <label className="block text-sm font-medium text-text-secondary mb-2">
-              What's Not Included
-            </label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="text"
-                value={newExclude}
-                onChange={(e) => setNewExclude(e.target.value)}
-                className="flex-1 rounded-lg px-4 py-2 bg-input text-sm outline-none border border-input focus:border-btn-primary"
-                placeholder="e.g., Flights"
-              />
-              <button
-                type="button"
-                onClick={addExclusion}
-                className="px-4 py-2 bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover transition"
-              >
-                Add
-              </button>
-            </div>
-            <ul className="list-disc list-inside text-sm text-text-primary">
-              {exclusions.map((item, idx) => (
-                <li key={idx}>{item}</li>
-              ))}
-            </ul>
-            {errors.exclusions && (
-              <span className="text-red-500 text-xs mt-1">{errors.exclusions.message}</span>
+          <div>
+            <label className="block text-sm font-medium mb-2">What's Not Included</label>
+            <textarea
+              {...register("exclusionsText")}
+              rows={4}
+              className="w-full rounded-lg px-4 py-3 bg-input text-sm border border-input"
+              placeholder="Flights, Visa, Tips..."
+            ></textarea>
+            {errors.exclusionsText && (
+              <p className="text-red-500 text-xs">{errors.exclusionsText.message}</p>
             )}
           </div>
 
