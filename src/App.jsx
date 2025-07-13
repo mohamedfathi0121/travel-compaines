@@ -4,6 +4,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { ThemeProvider } from "./context/ThemeProvider";
 import CompanyRegisterPage from "./pages/auth/Register";
+import Trips from "./pages/Trips";
+import CompanyProfilePage from "./pages/CompanyProfilePage";
+
 function App() {
   return (
     <>
@@ -11,6 +14,8 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<CompanyRegisterPage />} />
+            <Route path="trips" element={<Trips />} />
+            <Route path="/company/:id" element={<CompanyProfilePage />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
