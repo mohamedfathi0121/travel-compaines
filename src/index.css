@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 /* Define the dark mode variant */
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -12,6 +11,7 @@
   --color-text-hard-secondary: #808080;
   --color-input: #e8edf2;
   --color-header-background: #e5e8eb;
+  --color-form-input: #ffffff;
 
   /* --- Consolidated Button Colors --- */
   --color-button-primary: #367dc9;
@@ -29,6 +29,7 @@
     --color-text-secondary: #94a3b8;
     --color-text-hard-secondary: #ffffff;
     --color-input: #1e293b;
+    --color-form-input: #ffffff;
     /* header-background will automatically be inherited unless you override it */
 
     /* --- Dark Mode Button Overrides --- */
