@@ -15,9 +15,9 @@
 
   /* --- Consolidated Button Colors --- */
   --color-button-primary: #367dc9;
+  --color-button-primary-hover: #135296;
   --color-button-danger: #fb2c36;
   --color-button-danger-hover: #8b0000;
-  --color-button-primary-hover: #135296;
   --color-button-text: #e2e8f0;
 }
 

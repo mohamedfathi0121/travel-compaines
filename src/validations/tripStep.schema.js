@@ -46,15 +46,32 @@ export const tripStep3Schema = z.object({
     }),
 });
 export const tripStep4Schema = z.object({
-  price: z
+  priceSingle: z
     .string()
-    .min(1, "Price is required")
+    .min(1, "Single room price is required")
     .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-      message: "Price must be a positive number",
+      message: "Must be a positive number",
     }),
-  inclusions: z.array(z.string().min(1)).min(1, "At least one inclusion is required"),
-  exclusions: z.array(z.string().min(1)).min(1, "At least one exclusion is required"),
+  priceDouble: z
+    .string()
+    .min(1, "Double room price is required")
+    .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+      message: "Must be a positive number",
+    }),
+  priceTriple: z
+    .string()
+    .min(1, "Triple room price is required")
+    .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+      message: "Must be a positive number",
+    }),
+  inclusionsText: z
+    .string()
+    .min(1, "Inclusions field is required"),
+  exclusionsText: z
+    .string()
+    .min(1, "Exclusions field is required"),
 });
+
 
 // export const tripFormSchema = tripStep1Schema
 //   .merge(tripStep2Schema)

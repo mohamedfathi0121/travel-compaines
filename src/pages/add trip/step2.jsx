@@ -1,14 +1,18 @@
-import React from "react";
-import Header from "../../components/shared/header";
+import React, { useState } from "react";
+import Header from "../../components/shared/Header";
 import NextButton from "../../components/next-btn";
 import StepProgress from "../../components/StepProgress";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { tripStep2Schema } from "../../validations/tripStep.schema";
 import { useNavigate } from "react-router-dom";
+import { uploadToCloudinary } from "../../api/uploadFile";
+import { useTrip } from "../../context/TripContext";
 
 export default function TripFormStep2() {
   const navigate = useNavigate();
+  const { updateTripData } = useTrip();
+  const [uploading, setUploading] = useState(false);
 
   const {
     setValue,
@@ -22,9 +26,35 @@ export default function TripFormStep2() {
   const vrVideo = watch("vrVideo");
   const photos = watch("photos");
 
-  const onSubmit = (data) => {
-    console.log("✅ Step 2 Data:", data);
-    navigate("/step3");
+  const onSubmit = async data => {
+    try {
+      setUploading(true);
+
+      // Upload VR video
+      const videoUrl = await uploadToCloudinary(data.vrVideo, "trip_uploads");
+
+      // Upload photos
+      const photoUrls = [];
+      for (const photo of data.photos) {
+        const url = await uploadToCloudinary(photo, "trip_uploads");
+        photoUrls.push(url);
+      }
+
+      updateTripData({
+        vrVideoUrl: videoUrl,
+        photoUrls: photoUrls,
+      });
+
+      console.log("Uploaded to Cloudinary:");
+      console.log("Video URL:", videoUrl);
+      console.log("Photo URLs:", photoUrls);
+
+      navigate("/step3");
+    } catch (err) {
+      console.error("Upload error:", err.message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -37,12 +67,14 @@ export default function TripFormStep2() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* VR Video */}
           <div>
-            <label className="block text-sm text-text-secondary font-medium mb-2">
+            <label className="block text-sm font-medium mb-2 text-text-secondary">
               Upload VR Video
             </label>
             <div className="border-2 border-dashed border-input rounded-xl p-6 bg-input">
-              <div className="flex flex-col items-center justify-center text-center space-y-2">
-                <p className="text-sm font-medium">Drag and drop or browse to upload</p>
+              <div className="flex flex-col items-center space-y-2 text-center">
+                <p className="text-sm font-medium">
+                  Drag and drop or browse to upload
+                </p>
                 <p className="text-xs text-text-secondary max-w-md">
                   Supported formats: MP4, AVI, MOV. Max file size: 500MB.
                 </p>
@@ -52,16 +84,22 @@ export default function TripFormStep2() {
                     type="file"
                     accept="video/*"
                     className="hidden"
-                    onChange={(e) =>
+                    onChange={e =>
                       setValue("vrVideo", e.target.files?.[0], {
                         shouldValidate: true,
                       })
                     }
                   />
                 </label>
-                {vrVideo && <p className="text-sm text-text-secondary">Selected: {vrVideo.name}</p>}
+                {vrVideo && (
+                  <p className="text-sm text-text-secondary">
+                    Selected: {vrVideo.name}
+                  </p>
+                )}
                 {errors.vrVideo && (
-                  <p className="text-red-500 text-xs">{errors.vrVideo.message}</p>
+                  <p className="text-red-500 text-xs">
+                    {errors.vrVideo.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -69,12 +107,14 @@ export default function TripFormStep2() {
 
           {/* Photos */}
           <div>
-            <label className="block text-sm text-text-secondary font-medium mb-2">
+            <label className="block text-sm font-medium mb-2 text-text-secondary">
               Upload Photos
             </label>
             <div className="border-2 border-dashed border-input rounded-xl p-6 bg-input">
-              <div className="flex flex-col items-center justify-center text-center space-y-2">
-                <p className="text-sm font-medium">Drag and drop or browse to upload</p>
+              <div className="flex flex-col items-center space-y-2 text-center">
+                <p className="text-sm font-medium">
+                  Drag and drop or browse to upload
+                </p>
                 <p className="text-xs text-text-secondary max-w-md">
                   Supported formats: JPG, PNG. Max file size: 5MB per photo.
                 </p>
@@ -85,7 +125,7 @@ export default function TripFormStep2() {
                     accept="image/*"
                     multiple
                     className="hidden"
-                    onChange={(e) =>
+                    onChange={e =>
                       setValue("photos", Array.from(e.target.files || []), {
                         shouldValidate: true,
                       })
@@ -101,14 +141,18 @@ export default function TripFormStep2() {
                   </ul>
                 )}
                 {errors.photos && (
-                  <p className="text-red-500 text-xs">{errors.photos.message}</p>
+                  <p className="text-red-500 text-xs">
+                    {errors.photos.message}
+                  </p>
                 )}
               </div>
             </div>
           </div>
 
           <div className="flex justify-end mt-10">
-            <NextButton type="submit">Next</NextButton>
+            <NextButton type="submit" disabled={uploading}>
+              {uploading ? "Uploading..." : "Next"}
+            </NextButton>
           </div>
         </form>
       </div>
