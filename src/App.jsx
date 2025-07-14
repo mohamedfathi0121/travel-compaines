@@ -9,7 +9,9 @@ import TripFormStep1 from "./pages/add trip/step1";
 import TripFormStep2 from "./pages/add trip/step2";
 import TripFormStep3 from "./pages/add trip/step3";
 import TripFormStep4 from "./pages/add trip/step4";
+import Trips from "./pages/Trips";
 import Login from "./pages/login";
+import CompanyProfilePage from "./pages/CompanyProfilePage";
 function App() {
   return (
     <>
@@ -23,6 +25,8 @@ function App() {
               <Route path="step2" element={<TripFormStep2 />} />
               <Route path="step3" element={<TripFormStep3 />} />
               <Route path="step4" element={<TripFormStep4 />} />
+              <Route path="trips" element={<Trips />} />
+              <Route path="/company/:id" element={<CompanyProfilePage />} />
             </Routes>
           </BrowserRouter>
         </TripProvider>
