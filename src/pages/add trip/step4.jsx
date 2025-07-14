@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
@@ -6,10 +6,10 @@ import { tripStep4Schema } from "../../validations/tripStep.schema";
 import { useTrip } from "../../context/TripContext";
 import supabase from "../../utils/supabase";
 
-import Header from "../../components/shared/Header";
 import StepProgress from "../../components/StepProgress";
 import NextButton from "../../components/next-btn";
 import { useAuth } from "../../hooks/useAuth";
+import toast from "react-hot-toast";
 
 export default function TripFormStep4() {
   const navigate = useNavigate();
@@ -58,10 +58,14 @@ export default function TripFormStep4() {
           body: fullTrip,
         }
       );
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+      if (error) {
+        throw new Error(error.message);
+      }
 
-      if (error) throw error;
-
-      alert("Trip registered successfully!");
+      toast.success("Trip registered successfully!");
       navigate("/");
     } catch (err) {
       console.error("Submission failed:", err.message);

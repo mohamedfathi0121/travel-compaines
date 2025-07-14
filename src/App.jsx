@@ -13,6 +13,8 @@ import { AuthProvider } from "./context/AuthContext";
 import AuthLayout from "./components/layout/AuthLayout";
 import Home from "./pages/Home";
 import Layout from "./components/layout/Layout";
+import Trips from "./pages/Trips";
+import CompanyProfilePage from "./pages/CompanyProfilePage";
 function App() {
   return (
     <>
@@ -27,6 +29,8 @@ function App() {
                 </Route>
                 <Route path="/" element={<Layout />}>
                   <Route index element={<Home />} />
+                  <Route path="trips" element={<Trips />} />
+                  <Route path="profile" element={<CompanyProfilePage />} />
                   <Route path="step1" element={<TripFormStep1 />} />
                   <Route path="step2" element={<TripFormStep2 />} />
                   <Route path="step3" element={<TripFormStep3 />} />
