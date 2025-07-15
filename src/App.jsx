@@ -25,12 +25,10 @@ function App() {
         <TripProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<AuthLayout />}>
-                <Route path="login" element={<Login />} />
-                <Route path="register" element={<CompanyRegisterPage />} />
-              </Route>
               <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />
+                <Route path="login" element={<Login />} />
+                <Route path="register" element={<CompanyRegisterPage />} />
                 <Route path="trips" element={<Trips />} />
                 <Route path="profile" element={<CompanyProfilePage />} />
                 <Route path="create-trip" element={<CreateTrip />}>
