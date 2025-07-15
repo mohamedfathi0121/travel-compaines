@@ -49,7 +49,7 @@ export default function TripFormStep2() {
       console.log("Video URL:", videoUrl);
       console.log("Photo URLs:", photoUrls);
 
-      navigate("/step3");
+      navigate("/create-trip/step3");
     } catch (err) {
       console.error("Upload error:", err.message);
     } finally {
@@ -59,7 +59,6 @@ export default function TripFormStep2() {
 
   return (
     <>
-      <Header />
       <div className="min-h-screen bg-background text-text-primary px-6 md:px-32 py-8">
         <StepProgress step={2} />
         <h1 className="text-2xl font-bold mb-8">Upload Your Trip Media</h1>

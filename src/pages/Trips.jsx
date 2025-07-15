@@ -208,7 +208,7 @@ export default function Trips() {
         )}
       </div>
       <Link
-        to="/create-trip"
+        to="/create-trip/step1"
                 className= " fixed bottom-4 right-4 bg-button-primary hover:bg-button-primary-hover shadow-text-secondary hover:shadow-sm text-button-text font-bold py-2 px-4 rounded transition duration-300"
       >
         Create Trip

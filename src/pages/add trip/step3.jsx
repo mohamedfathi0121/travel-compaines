@@ -33,12 +33,11 @@ export default function TripFormStep3() {
       availableTickets: data.ticketCount,
     });
     // 5. Navigate to the next step
-    navigate("/step4");
+    navigate("/create-trip/step4");
   };
 
   return (
     <>
-      <Header />
       <div className="min-h-screen bg-background text-text-primary px-6 md:px-32 py-8">
         <StepProgress step={3} />
         <h1 className="text-2xl font-bold mb-8">Location and Availability</h1>

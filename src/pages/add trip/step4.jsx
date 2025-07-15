@@ -66,7 +66,7 @@ export default function TripFormStep4() {
       }
 
       toast.success("Trip registered successfully!");
-      navigate("/");
+      navigate("/trips");
     } catch (err) {
       console.error("Submission failed:", err.message);
       alert("Error: " + err.message);
@@ -77,7 +77,6 @@ export default function TripFormStep4() {
 
   return (
     <>
-      <Header />
       <div className="min-h-screen bg-background text-text-primary px-6 md:px-32 py-8">
         <StepProgress step={4} />
         <h1 className="text-2xl font-bold mb-6">Pricing and Inclusions</h1>

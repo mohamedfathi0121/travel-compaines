@@ -63,12 +63,11 @@ export default function TripFormStep1() {
       startDate: data.startDate,
       endDate: data.endDate,
     });
-    navigate("/step2");
+    navigate("/create-trip/step2");
   };
 
   return (
     <>
-      <Header />
       <div className="min-h-screen bg-background text-text-primary px-6 md:px-32 py-8">
         <StepProgress step={1} />
         <h1 className="text-2xl font-bold mb-8">Basic Trip Information</h1>
