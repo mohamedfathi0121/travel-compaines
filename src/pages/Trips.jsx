@@ -39,16 +39,17 @@ export default function Trips() {
       const ongoing = [];
       const past = [];
 
-      data.forEach(trip => {
+      data.forEach((trip) => {
         const start = new Date(trip.start_date);
         const end = new Date(trip.end_date);
 
         const tripData = {
           id: trip.id,
+          baseTripId: trip.base_trips?.id,
           title: trip.base_trips?.title || "Untitled",
           subtitle: trip.base_trips?.description || "",
           date: `${trip.start_date} - ${trip.end_date}`,
-          image: trip.base_trips?.photo_urls?.[0] || "", // Assuming it's an array
+          image: trip.base_trips?.photo_urls?.[0] || "",
           location: trip.base_trips?.city || "Unknown",
         };
 
@@ -78,7 +79,7 @@ export default function Trips() {
             Trips
           </h1>
           <div className="flex flex-wrap gap-2 sm:space-x-4 text-sm font-medium border-b border-text-secondary">
-            {tabs.map(tab => (
+            {tabs.map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -103,7 +104,7 @@ export default function Trips() {
             {trips.upcoming.length === 0 ? (
               <p className="text-text-secondary">No upcoming trips found.</p>
             ) : (
-              trips.upcoming.map(trip => (
+              trips.upcoming.map((trip) => (
                 <div
                   key={trip.id}
                   className="flex flex-col sm:flex-row items-start mb-6 sm:space-x-6 border-b border-text-secondary pb-4"
@@ -122,12 +123,12 @@ export default function Trips() {
                       {trip.location}
                     </p>
                     <div className="flex gap-2">
-                      <button
-                   
+                      <Link
+                        to={`/repost-trip/step5/${trip.baseTripId}`}
                         className="bg-button-primary hover:bg-button-primary-hover text-background px-3 py-1 rounded text-sm"
                       >
                         Repost
-                      </button>
+                      </Link>
                     </div>
                   </div>
                   {trip.image && (
@@ -159,7 +160,7 @@ export default function Trips() {
                   </tr>
                 </thead>
                 <tbody>
-                  {trips.ongoing.map(trip => (
+                  {trips.ongoing.map((trip) => (
                     <tr
                       key={trip.id}
                       className="text-sm text-text-primary border-t"
@@ -191,7 +192,7 @@ export default function Trips() {
                   </tr>
                 </thead>
                 <tbody>
-                  {trips.past.map(trip => (
+                  {trips.past.map((trip) => (
                     <tr
                       key={trip.id}
                       className="text-sm text-text-primary border-t"
@@ -209,7 +210,7 @@ export default function Trips() {
       </div>
       <Link
         to="/create-trip/step1"
-                className= " fixed bottom-4 right-4 bg-button-primary hover:bg-button-primary-hover shadow-text-secondary hover:shadow-sm text-button-text font-bold py-2 px-4 rounded transition duration-300"
+        className=" fixed bottom-4 right-4 bg-button-primary hover:bg-button-primary-hover shadow-text-secondary hover:shadow-sm text-button-text font-bold py-2 px-4 rounded transition duration-300"
       >
         Create Trip
       </Link>{" "}

@@ -38,7 +38,10 @@ function App() {
                   <Route path="step4" element={<TripFormStep4 />} />
                 </Route>
                 <Route path="repost-trip" element={<CreateTrip />}>
-                  <Route path="step5" element={<TripFormStep5 />} />
+                  <Route
+                    path="/repost-trip/step5/:tripId"
+                    element={<TripFormStep5 />}
+                  />
                   <Route path="step6" element={<TripFormStep6 />} />
                 </Route>
               </Route>

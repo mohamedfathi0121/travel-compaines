@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
+import supabase from "../../utils/supabase";
 import { useTrip } from "../../context/TripContext";
 import StepProgress from "../StepProgress";
 import NextButton from "../next-btn";
@@ -10,6 +11,7 @@ import DatePickerCalendar from "../DatePickerCalendar";
 
 export default function TripFormStep5() {
   const navigate = useNavigate();
+  const { baseTripId } = useParams();
   const { tripData, updateTripData } = useTrip();
 
   const {
@@ -19,7 +21,6 @@ export default function TripFormStep5() {
     watch,
     formState: { errors },
   } = useForm({
- 
     defaultValues: {
       locationURL: tripData.locationURL || "",
       ticketCount: tripData.availableTickets || "",
@@ -28,9 +29,35 @@ export default function TripFormStep5() {
     },
   });
 
-  const onSubmit = data => {
+  useEffect(() => {
+    async function fetchOriginalBaseTrip() {
+      const { data, error } = await supabase
+        .from("base_trips")
+        .select("*")
+        .eq("id", baseTripId)
+        .single();
+
+      if (error) {
+        console.error("Error loading base trip:", error.message);
+      } else {
+        // تعيين البيانات داخل النموذج
+        if (data.default_location_url) {
+          setValue("locationURL", data.default_location_url);
+        }
+        if (data.default_ticket_count) {
+          setValue("ticketCount", data.default_ticket_count);
+        }
+      }
+    }
+
+    if (baseTripId) {
+      fetchOriginalBaseTrip();
+    }
+  }, [baseTripId, setValue]);
+
+  const onSubmit = (data) => {
     updateTripData({
-      id: "bc01ff7e-cad4-4719-90ad-45248d21fefe",
+      baseTripId,
       locationURL: data.locationURL,
       availableTickets: data.ticketCount,
       startDate: data.startDate,
@@ -50,7 +77,9 @@ export default function TripFormStep5() {
       >
         {/* Location URL */}
         <div className="flex flex-col md:col-span-2">
-          <label className="text-sm text-text-secondary mb-1">Location URL</label>
+          <label className="text-sm text-text-secondary mb-1">
+            Location URL
+          </label>
           <input
             {...register("locationURL")}
             type="url"
@@ -87,7 +116,7 @@ export default function TripFormStep5() {
           <label className="text-sm text-text-secondary mb-1">Start Date</label>
           <DatePickerCalendar
             selectedDate={watch("startDate")}
-            onDateChange={date =>
+            onDateChange={(date) =>
               setValue("startDate", date, { shouldValidate: false })
             }
           />
@@ -103,7 +132,7 @@ export default function TripFormStep5() {
           <label className="text-sm text-text-secondary mb-1">End Date</label>
           <DatePickerCalendar
             selectedDate={watch("endDate")}
-            onDateChange={date =>
+            onDateChange={(date) =>
               setValue("endDate", date, { shouldValidate: false })
             }
           />
