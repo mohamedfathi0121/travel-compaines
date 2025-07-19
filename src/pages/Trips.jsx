@@ -45,10 +45,11 @@ export default function Trips() {
 
         const tripData = {
           id: trip.id,
+          baseTripId: trip.base_trips?.id,
           title: trip.base_trips?.title || "Untitled",
           subtitle: trip.base_trips?.description || "",
           date: `${trip.start_date} - ${trip.end_date}`,
-          image: trip.base_trips?.photo_urls?.[0] || "", // Assuming it's an array
+          image: trip.base_trips?.photo_urls?.[0] || "",
           location: trip.base_trips?.city || "Unknown",
         };
 
@@ -116,18 +117,22 @@ export default function Trips() {
                       {trip.title}
                     </h3>
                     <p className="text-sm text-text-secondary mb-2">
-                      {trip.date}
+                      {new Date(trip.date.split(" - ")[0]).toLocaleDateString()}{" "}
+                      -{" "}
+                      {new Date(trip.date.split(" - ")[1]).toLocaleDateString()}
                     </p>
+
                     <p className="text-sm text-text-secondary">
                       {trip.location}
                     </p>
                     <div className="flex gap-2">
-                      <button
-                   
+                      <Link
+                        to={`/repost-trip/step5`}
+                        state={{ baseTripId: trip.baseTripId }}
                         className="bg-button-primary hover:bg-button-primary-hover text-background px-3 py-1 rounded text-sm"
                       >
                         Repost
-                      </button>
+                      </Link>
                     </div>
                   </div>
                   {trip.image && (
@@ -209,10 +214,10 @@ export default function Trips() {
       </div>
       <Link
         to="/create-trip/step1"
-                className= " fixed bottom-4 right-4 bg-button-primary hover:bg-button-primary-hover shadow-text-secondary hover:shadow-sm text-button-text font-bold py-2 px-4 rounded transition duration-300"
+        className=" fixed bottom-4 right-4 bg-button-primary hover:bg-button-primary-hover shadow-text-secondary hover:shadow-sm text-button-text font-bold py-2 px-4 rounded transition duration-300"
       >
         Create Trip
-      </Link>{" "}
+      </Link>
     </div>
   );
 }

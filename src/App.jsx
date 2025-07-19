@@ -1,10 +1,10 @@
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import TripFormStep1 from "./pages/add trip/step1";
-import TripFormStep2 from "./pages/add trip/step2";
-import TripFormStep3 from "./pages/add trip/step3";
-import TripFormStep4 from "./pages/add trip/step4";
+import TripFormStep1 from "./components/add trip/step1";
+import TripFormStep2 from "./components/add trip/step2";
+import TripFormStep3 from "./components/add trip/step3";
+import TripFormStep4 from "./components/add trip/step4";
 import { ThemeProvider } from "./context/ThemeProvider";
 import { TripProvider } from "./context/TripContext";
 import CompanyRegisterPage from "./pages/auth/Register";

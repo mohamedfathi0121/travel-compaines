@@ -4,10 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { tripStep1Schema } from "../../validations/tripStep.schema";
 import { getAllCountries, getCitiesByCountry } from "../../api/locationApi";
-import Header from "../../components/shared/Header";
-import StepProgress from "../../components/StepProgress";
-import DatePickerCalendar from "../../components/DatePickerCalendar";
-import NextButton from "../../components/next-btn";
+import Header from "../shared/Header";
+import StepProgress from "../StepProgress";
+import DatePickerCalendar from "../DatePickerCalendar";
+import NextButton from "../next-btn";
 import { useTrip } from "../../context/TripContext";
 import Select from "react-select";
 

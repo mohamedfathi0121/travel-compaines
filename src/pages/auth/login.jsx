@@ -1,14 +1,23 @@
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useAuth } from '../../hooks/useAuth';
-import toast from 'react-hot-toast';
-import Input from '../../components/shared/Input';
-import { Link, useNavigate } from 'react-router-dom';
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth"; // Make sure this hook correctly consumes your AuthContext
+import toast from "react-hot-toast";
+import z from "zod";
 
 const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
+  email: z.string().email("Invalid email address"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/\d/, "Password must contain at least one number")
+    .regex(
+      /[@$!%*?&]/,
+      "Password must contain at least one special character (@, $, !, %, *, ?, &)"
+    ),
 });
 
 const LoginPage = () => {
@@ -17,19 +26,26 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({ resolver: zodResolver(loginSchema) });
+
   const { signIn } = useAuth();
-  
-  const Navigate = useNavigate();
-  const onSubmit = async (data) => {
-    const toastId = toast.loading('Signing in...');
+  const navigate = useNavigate();
+
+  const onSubmit = async data => {
+    const toastId = toast.loading("Signing in...");
     try {
       const { error } = await signIn(data.email, data.password);
-      if (error) throw error;
-      toast.success('Login successful!', { id: toastId });
-      Navigate('/'); // Redirect to home or dashboard after successful login
+
+      if (error) {
+        throw error;
+      }
+
+      toast.success("Login successful!", { id: toastId });
+      navigate("/"); 
     } catch (error) {
       console.error("Sign-in error:", error);
-      toast.error(error.message || 'Invalid email or password.', { id: toastId });
+      toast.error(error.message || "An unexpected error occurred.", {
+        id: toastId,
+      });
     }
   };
 
@@ -48,14 +64,16 @@ const LoginPage = () => {
               </label>
               <input
                 type="email"
-                {...register('email')}
+                {...register("email")}
                 placeholder="Enter your email"
                 className={`w-full bg-input px-4 py-3 border text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  errors.email ? 'border-red-500' : 'border-gray-300'
+                  errors.email ? "border-red-500" : "border-gray-300"
                 }`}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -65,19 +83,19 @@ const LoginPage = () => {
               </label>
               <input
                 type="password"
-                {...register('password')}
+                {...register("password")}
                 placeholder="Enter your password"
                 className={`w-full bg-input px-4 py-3 border text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  errors.password ? 'border-red-500' : 'border-gray-300'
+                  errors.password ? "border-red-500" : "border-gray-300"
                 }`}
               />
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
               )}
             </div>
           </div>
-
-          
 
           <div>
             <button
@@ -85,17 +103,23 @@ const LoginPage = () => {
               disabled={isSubmitting}
               className="w-full py-3 rounded-2xl bg-button-primary text-white font-semibold text-sm hover:bg-btn-primary-hover transition disabled:opacity-50"
             >
-              {isSubmitting ? 'Signing in...' : 'Log in'}
+              {isSubmitting ? "Signing in..." : "Log in"}
             </button>
           </div>
 
           <div className="text-center space-y-2">
-            <a href="#" className="text-sm font-medium text-blue-600 hover:underline">
+            <a
+              href="#"
+              className="text-sm font-medium text-blue-600 hover:underline"
+            >
               Forgot password?
             </a>
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link to="/register" className="font-medium text-blue-600 hover:underline">
+              Don't have an account?{" "}
+              <Link
+                to="/register"
+                className="font-medium text-blue-600 hover:underline"
+              >
                 Sign up
               </Link>
             </p>
