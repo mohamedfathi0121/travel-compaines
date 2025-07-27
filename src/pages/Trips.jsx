@@ -127,7 +127,7 @@ export default function Trips() {
                     </p>
                     <div className="flex gap-2">
                       <Link
-                        to={`/repost-trip/step5`}
+                        to={`/repost-trip/step5/${trip.baseTripId}`}
                         state={{ baseTripId: trip.baseTripId }}
                         className="bg-button-primary hover:bg-button-primary-hover text-background px-3 py-1 rounded text-sm"
                       >
@@ -170,7 +170,17 @@ export default function Trips() {
                       className="text-sm text-text-primary border-t"
                     >
                       <td className="px-4 py-2">{trip.title}</td>
-                      <td className="px-4 py-2">{trip.date}</td>
+                      <td className="px-4 py-2">
+                        <p className="text-sm text-text-secondary mb-2">
+                          {new Date(
+                            trip.date.split(" - ")[0]
+                          ).toLocaleDateString()}{" "}
+                          -{" "}
+                          {new Date(
+                            trip.date.split(" - ")[1]
+                          ).toLocaleDateString()}
+                        </p>
+                      </td>
                       <td className="px-4 py-2">{trip.location}</td>
                     </tr>
                   ))}
@@ -202,7 +212,17 @@ export default function Trips() {
                       className="text-sm text-text-primary border-t"
                     >
                       <td className="px-4 py-2">{trip.title}</td>
-                      <td className="px-4 py-2">{trip.date}</td>
+                      <td className="px-4 py-2">
+                        <p className="text-sm text-text-secondary mb-2">
+                          {new Date(
+                            trip.date.split(" - ")[0]
+                          ).toLocaleDateString()}{" "}
+                          -{" "}
+                          {new Date(
+                            trip.date.split(" - ")[1]
+                          ).toLocaleDateString()}
+                        </p>
+                      </td>
                       <td className="px-4 py-2">{trip.location}</td>
                     </tr>
                   ))}

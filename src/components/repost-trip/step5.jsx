@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,6 @@ import { tripStep5Schema } from "../../validations/repostTrip.schema";
 
 export default function TripFormStep5() {
   const navigate = useNavigate();
-  // const { baseTripId } = useParams();
   const { tripData, updateTripData } = useTrip();
   const location = useLocation();
   const { baseTripId } = location.state || {}; // Destructure safely
@@ -32,32 +31,6 @@ export default function TripFormStep5() {
       endDate: tripData.endDate || "",
     },
   });
-
-  useEffect(() => {
-    async function fetchOriginalBaseTrip() {
-      const { data, error } = await supabase
-        .from("base_trips")
-        .select("*")
-        .eq("id", baseTripId)
-        .single();
-
-      if (error) {
-        console.error("Error loading base trip:", error.message);
-      } else {
-        // تعيين البيانات داخل النموذج
-        if (data.default_location_url) {
-          setValue("locationURL", data.default_location_url);
-        }
-        if (data.default_ticket_count) {
-          setValue("ticketCount", data.default_ticket_count);
-        }
-      }
-    }
-
-    if (baseTripId) {
-      fetchOriginalBaseTrip();
-    }
-  }, [baseTripId, setValue]);
 
   const onSubmit = (data) => {
     updateTripData({
