@@ -18,7 +18,18 @@ export const tripStep5Schema = z
   .refine(data => new Date(data.startDate) <= new Date(data.endDate), {
     message: "End date must be after start date",
     path: ["endDate"],
-  });
+  })
+    .refine(
+    (data) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); 
+      return new Date(data.startDate) >= today;
+    },
+    {
+      message:"You cannot choose a date in the past" ,
+      path: ["startDate"], 
+    }
+  );
 
 // Schema for the "Pricing and Inclusions" step (Step 6)
 export const tripStep6Schema = z.object({

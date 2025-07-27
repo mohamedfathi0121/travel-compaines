@@ -36,3 +36,15 @@ priceTriple: "",
 };
 
 export const useTrip = () => useContext(TripContext);
+
+
+
+
+
+
+
+
+
+
+
+
