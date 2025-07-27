@@ -17,8 +17,19 @@ export const tripStep1Schema = z
       message: "End date must be after start date",
       path: ["endDate"],
     }
+  )
+ 
+  .refine(
+    (data) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); 
+      return new Date(data.startDate) >= today;
+    },
+    {
+      message:"You cannot choose a date in the past" ,
+      path: ["startDate"], 
+    }
   );
-
 // Step 2
 export const tripStep2Schema = z.object({
   vrVideo: z
