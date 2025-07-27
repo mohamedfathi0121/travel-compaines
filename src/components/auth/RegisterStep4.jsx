@@ -4,12 +4,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { companyStep4Schema } from '../../validations/auth.schema';
 import supabase from '../../utils/supabase.js';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const CompanyStep4 = ({ prevStep, formData }) => {
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const navigate = useNavigate();
 
   const { register, handleSubmit, formState: { errors }, setValue } = useForm({
     resolver: zodResolver(companyStep4Schema),
@@ -74,6 +76,7 @@ const CompanyStep4 = ({ prevStep, formData }) => {
       if (functionError) throw functionError;
 
       toast.success('Registration successful! Please check your email.', { id: toastId });
+      navigate('/login');
     } catch (error) {
       console.error('Full error details:', error);
       let msg = error.message || 'Unexpected error.';
@@ -110,7 +113,7 @@ const CompanyStep4 = ({ prevStep, formData }) => {
       >
         <h3 className="text-lg font-semibold text-text-primary">Upload Documents</h3>
         <p className="text-text-secondary">Drag and drop or click to browse</p>
-        <p className="text-xs text-gray-400">Accepted: PDF, JPG, PNG · Max size: 10MB</p>
+        <p className="text-xs text-gray-400">Accepted: PDF · Max size: 10MB</p>
 
         <input
           id="documents"
@@ -143,14 +146,14 @@ const CompanyStep4 = ({ prevStep, formData }) => {
           type="button"
           onClick={prevStep}
           disabled={isSubmitting}
-          className="text-sm text-gray-600 hover:text-blue-600 font-medium transition"
+          className="border  border-button-primary hover:bg-button-primary  text-button-text px-6 py-3 rounded"
         >
           ← Back
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="py-3 px-8 bg-button-primary text-white text-sm font-semibold rounded-2xl hover:bg-btn-primary-hover transition disabled:opacity-50"
+          className="py-3 px-8 bg-button-primary text-white text-sm font-semibold rounded hover:bg-btn-primary-hover transition disabled:opacity-50"
         >
           {isSubmitting ? 'Submitting…' : 'Complete Registration'}
         </button>

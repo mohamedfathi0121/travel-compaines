@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
-import { tripStep4Schema } from "../../validations/tripStep.schema";
+import { tripStep4Schema } from "../../validations/tripStep.schema"; // Assuming you have this schema
 import { useTrip } from "../../context/TripContext";
 import supabase from "../../utils/supabase";
 
-import StepProgress from "../../components/StepProgress";
-import NextButton from "../../components/next-btn";
+import StepProgress from "../StepProgress";
+import NextButton from "../next-btn";
 import { useAuth } from "../../hooks/useAuth";
 import toast from "react-hot-toast";
 
@@ -15,9 +15,7 @@ export default function TripFormStep4() {
   const navigate = useNavigate();
   const { tripData } = useTrip();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Fetch the user's profile to get their associated company_id
-  const { user } = useAuth(); // Assuming you have a useAuth hook to get the current user
+  const { user } = useAuth();
 
   const {
     register,
@@ -25,11 +23,11 @@ export default function TripFormStep4() {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(tripStep4Schema),
-    defaultValues: tripData, // Load all previous data
+    defaultValues: tripData,
   });
 
   const onSubmit = async data => {
-    if (!user.id) {
+    if (!user?.id) {
       alert("Cannot submit: Company ID is missing.");
       return;
     }
@@ -48,7 +46,7 @@ export default function TripFormStep4() {
       priceTriple: data.priceTriple,
       priceInclude: data.inclusionsText,
       priceNotInclude: data.exclusionsText,
-      companyId: user.id, // Include the fetched company ID
+      companyId: user.id,
     };
 
     try {
@@ -58,7 +56,7 @@ export default function TripFormStep4() {
           body: fullTrip,
         }
       );
-      if (result.error) {
+      if (result?.error) {
         throw new Error(result.error.message);
       }
       if (error) {
@@ -91,6 +89,12 @@ export default function TripFormStep4() {
                   className="w-full rounded-lg px-4 py-3 bg-input text-sm border-input"
                   disabled={isSubmitting}
                 />
+                {/* Error message display for price fields */}
+                {errors[`price${type}`] && (
+                  <span className="text-red-500 text-xs mt-1">
+                    {errors[`price${type}`].message}
+                  </span>
+                )}
               </div>
             ))}
           </div>
@@ -104,6 +108,12 @@ export default function TripFormStep4() {
               className="w-full rounded-lg px-4 py-3 bg-input text-sm border-input"
               disabled={isSubmitting}
             />
+            {/* Error message display for inclusionsText */}
+            {errors.inclusionsText && (
+              <span className="text-red-500 text-xs mt-1">
+                {errors.inclusionsText.message}
+              </span>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">
@@ -115,9 +125,15 @@ export default function TripFormStep4() {
               className="w-full rounded-lg px-4 py-3 bg-input text-sm border-input"
               disabled={isSubmitting}
             />
+            {/* Error message display for exclusionsText */}
+            {errors.exclusionsText && (
+              <span className="text-red-500 text-xs mt-1">
+                {errors.exclusionsText.message}
+              </span>
+            )}
           </div>
           <div className="flex justify-center pt-4">
-            <NextButton type="submit" disabled={isSubmitting || !user.id}>
+            <NextButton type="submit" disabled={isSubmitting || !user?.id}>
               {isSubmitting ? "Submitting..." : "Complete Registration"}
             </NextButton>
           </div>

@@ -117,14 +117,18 @@ export default function Trips() {
                       {trip.title}
                     </h3>
                     <p className="text-sm text-text-secondary mb-2">
-                      {trip.date}
+                      {new Date(trip.date.split(" - ")[0]).toLocaleDateString()}{" "}
+                      -{" "}
+                      {new Date(trip.date.split(" - ")[1]).toLocaleDateString()}
                     </p>
+
                     <p className="text-sm text-text-secondary">
                       {trip.location}
                     </p>
                     <div className="flex gap-2">
                       <Link
-                        to={`/repost-trip/step5/${trip.baseTripId}`}
+                        to={`/repost-trip/step5`}
+                        state={{ baseTripId: trip.baseTripId }}
                         className="bg-button-primary hover:bg-button-primary-hover text-background px-3 py-1 rounded text-sm"
                       >
                         Repost
@@ -213,7 +217,7 @@ export default function Trips() {
         className=" fixed bottom-4 right-4 bg-button-primary hover:bg-button-primary-hover shadow-text-secondary hover:shadow-sm text-button-text font-bold py-2 px-4 rounded transition duration-300"
       >
         Create Trip
-      </Link>{" "}
+      </Link>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Header from "../../components/shared/Header";
-import NextButton from "../../components/next-btn";
-import StepProgress from "../../components/StepProgress";
+import Header from "../shared/Header";
+import NextButton from "../next-btn";
+import StepProgress from "../StepProgress";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { tripStep2Schema } from "../../validations/tripStep.schema";

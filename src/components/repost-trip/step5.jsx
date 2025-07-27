@@ -1,19 +1,21 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate, useParams } from "react-router-dom";
-
-import supabase from "../../utils/supabase";
+import { useNavigate } from "react-router-dom";
 import { useTrip } from "../../context/TripContext";
 import StepProgress from "../StepProgress";
 import NextButton from "../next-btn";
 import DatePickerCalendar from "../DatePickerCalendar";
+import { useLocation } from "react-router-dom";
+import { tripStep5Schema } from "../../validations/repostTrip.schema";
 
 export default function TripFormStep5() {
   const navigate = useNavigate();
-  const { baseTripId } = useParams();
+  // const { baseTripId } = useParams();
   const { tripData, updateTripData } = useTrip();
-
+  const location = useLocation();
+  const { baseTripId } = location.state || {}; // Destructure safely
+  console.log("Base Trip ID:", baseTripId);
   const {
     register,
     handleSubmit,
@@ -21,6 +23,8 @@ export default function TripFormStep5() {
     watch,
     formState: { errors },
   } = useForm({
+    resolver: zodResolver(tripStep5Schema),
+
     defaultValues: {
       locationURL: tripData.locationURL || "",
       ticketCount: tripData.availableTickets || "",
@@ -57,7 +61,7 @@ export default function TripFormStep5() {
 
   const onSubmit = (data) => {
     updateTripData({
-      baseTripId,
+      id: baseTripId,
       locationURL: data.locationURL,
       availableTickets: data.ticketCount,
       startDate: data.startDate,
@@ -68,7 +72,7 @@ export default function TripFormStep5() {
 
   return (
     <div className="min-h-screen bg-background text-text-primary px-6 md:px-32 py-8">
-      <StepProgress step={3} />
+      <StepProgress step={1} totalSteps={2} />
       <h1 className="text-2xl font-bold mb-8">Location and Availability</h1>
 
       <form
