@@ -1,78 +1,110 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { companyStep3Schema } from '../../validations/auth.schema';
-import Input from '../../components/shared/Input';
-
-
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { companyStep3Schema } from "../../validations/auth.schema";
+import Input from "../../components/shared/Input";
+import phoneCodes from "../../data/phone.json"; // ✅ Import local JSON
 
 const CompanyStep3 = ({ nextStep, prevStep, updateFormData }) => {
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        resolver: zodResolver(companyStep3Schema)
-    });
+  // Convert JSON to dropdown-friendly array
+  const countryCodes = Object.entries(phoneCodes).map(([iso, code]) => ({
+    iso,
+    code: `+${code}`,
+    label: `${iso} (+${code})`,
+  }));
 
-    const onSubmit = (data) => {
-        updateFormData(data);
-        nextStep();
-    };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(companyStep3Schema),
+  });
 
-    return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <h1 className="text-3xl font-bold" style={{ color: 'var(--color-text-primary)' }}>Contact details and social media</h1>
-            <div className="space-y-4">
-                {/* --- Phone Number Input with Country Code --- */}
-                <div>
-                    <label htmlFor="phoneNumber" className="block text-sm font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>
-                        Phone number
-                    </label>
-                    <div className="flex">
-                        <select
-                            {...register('countryCode')}
-                            defaultValue=""
-                            className="w-1/3 rounded-l-lg border-r-0 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            style={{ 
-                                backgroundColor: 'var(--color-input)', 
-                                color: 'var(--color-text-primary)',
-                                borderColor: errors.countryCode ? '#fb2c36' : 'transparent'
-                            }}
-                        >
-                            <option value="" disabled>Code</option>
-                            <option value="+1">USA (+1)</option>
-                            <option value="+44">UK (+44)</option>
-                            <option value="+91">IN (+91)</option>
-                            <option value="+20">EG (+20)</option>
-                            <option value="+61">AUS (+61)</option>
-                        </select>
-                        <input
-                            id="phoneNumber"
-                            type="tel"
-                            placeholder="5551234567"
-                            {...register('phoneNumber')}
-                            className="w-2/3 rounded-r-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            style={{ 
-                                backgroundColor: 'var(--color-input)', 
-                                color: 'var(--color-text-primary)',
-                                borderColor: errors.phoneNumber ? '#fb2c36' : 'transparent'
-                            }}
-                        />
-                    </div>
-                    {errors.countryCode && <p className="text-red-500 text-xs mt-1">{errors.countryCode.message}</p>}
-                    {errors.phoneNumber && !errors.countryCode && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber.message}</p>}
-                </div>
-                {/* --- End Phone Number Input --- */}
-                
-                <Input name="ticktok" label="Ticktok profile URL" register={register} error={errors.linkedin1} placeholder="https://www.linkedin.com/in/yourprofile" />
-                <Input name="instagram" label="Instegram profile URL (optional)" register={register} error={errors.linkedin2} placeholder="https://www.linkedin.com/in/anotherprofile" />
-                <Input name="facebook" label="Facebook profile URL (optional)" register={register} error={errors.facebook} placeholder="https://www.facebook.com/yourprofile" />
-            </div>
-            <div className="flex justify-between items-center">
-                <button type="button" onClick={prevStep} style={{ color: 'var(--color-text-secondary)' }} className="font-medium hover:underline">Back</button>
-                <button type="submit" style={{ backgroundColor: 'var(--color-button-primary)', color: 'var(--color-button-text)' }} className="font-bold py-3 px-8 rounded-lg transition-colors hover:bg-[var(--color-button-primary-hover)]">
-                    Next
-                </button>
-            </div>
-        </form>
-    );
+  const onSubmit = data => {
+    updateFormData(data);
+    nextStep();
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <h1 className="text-3xl font-bold text-text-primary">
+        Contact Details & Social Media
+      </h1>
+
+      {/* ✅ Phone Number with Country Code */}
+      <div>
+        <label className="block text-sm mb-1 text-text-primary">
+          Phone Number
+        </label>
+        <div className="flex">
+          <select
+            {...register("countryCode")}
+            className="w-1/3 bg-input p-3 rounded-l-md text-text-hard-secondary"
+          >
+            <option value="">Code</option>
+            {countryCodes.map(c => (
+              <option key={c.iso} value={c.code}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="tel"
+            placeholder="5551234567"
+            {...register("phoneNumber")}
+            className="w-2/3 bg-input p-3 rounded-r-md text-text-primary"
+          />
+        </div>
+        {errors.countryCode && (
+          <p className="text-red-500 text-xs">{errors.countryCode.message}</p>
+        )}
+        {errors.phoneNumber && !errors.countryCode && (
+          <p className="text-red-500 text-xs">{errors.phoneNumber.message}</p>
+        )}
+      </div>
+
+      {/* ✅ Social Media */}
+      <Input
+        name="tiktok"
+        label="TikTok Profile URL"
+        register={register}
+        error={errors.tiktok}
+        placeholder="https://www.tiktok.com/@yourprofile"
+      />
+      <Input
+        name="instagram"
+        label="Instagram Profile URL (optional)"
+        register={register}
+        error={errors.instagram}
+        placeholder="https://www.instagram.com/yourprofile"
+      />
+      <Input
+        name="facebook"
+        label="Facebook Profile URL (optional)"
+        register={register}
+        error={errors.facebook}
+        placeholder="https://www.facebook.com/yourprofile"
+      />
+
+      <div className="flex justify-between">
+        <button
+          type="button"
+          onClick={prevStep}
+          className="border  border-button-primary hover:bg-button-primary  text-button-text px-6 py-3 rounded"
+        >
+          ← Back
+        </button>
+        <button
+          type="submit"
+          className="bg-button-primary text-white px-6 py-3 rounded"
+        >
+          Next
+        </button>
+      </div>
+    </form>
+  );
 };
 
 export default CompanyStep3;

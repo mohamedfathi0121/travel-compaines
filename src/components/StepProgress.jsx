@@ -6,7 +6,7 @@ export default function StepProgress({ step, totalSteps = 4 }) {
 
   return (
     <div className="mb-6">
-      <p className="text-sm text-text-secondary font-medium mb-1">
+      <p className="text-sm text-text-primary font-medium mb-1">
         Step {step} of {totalSteps}
       </p>
       <div className="w-full h-3 bg-input rounded-full overflow-hidden">

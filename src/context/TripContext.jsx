@@ -1,5 +1,6 @@
 // src/context/TripContext.js
 import { createContext, useContext, useState } from "react";
+import { id } from "zod/v4/locales";
 
 const TripContext = createContext();
 
@@ -19,6 +20,7 @@ priceSingle: "",
 priceDouble: "",
 priceTriple: "",
  company_id: "",
+ id: "",
 });
 
 

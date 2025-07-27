@@ -56,6 +56,8 @@ export const tripStep3Schema = z.object({
       message: "Ticket count must be a positive number",
     }),
 });
+
+
 export const tripStep4Schema = z.object({
   priceSingle: z
     .string()
@@ -83,7 +85,4 @@ export const tripStep4Schema = z.object({
     .min(1, "Exclusions field is required"),
 });
 
-
-// export const tripFormSchema = tripStep1Schema
-//   .merge(tripStep2Schema)
-//   .merge(tripStep3Schema);
+//   .me

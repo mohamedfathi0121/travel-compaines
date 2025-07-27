@@ -1,111 +1,165 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { companyStep4Schema } from '../../validations/auth.schema'; // Import your validationSchemas';
-import supabase  from '../../utils/supabase.js';
+import { companyStep4Schema } from '../../validations/auth.schema';
+import supabase from '../../utils/supabase.js';
 import toast from 'react-hot-toast';
-
-// Helper function remains the same
-
-
-
-
-
+import { useNavigate } from 'react-router-dom';
 
 const CompanyStep4 = ({ prevStep, formData }) => {
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        resolver: zodResolver(companyStep4Schema)
-    });
-    const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const navigate = useNavigate();
 
-    const onSubmit = async (data) => {
-        setIsSubmitting(true);
-        const toastId = toast.loading('Submitting registration...');
-        const finalData = { ...formData, ...data };
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm({
+    resolver: zodResolver(companyStep4Schema),
+  });
 
-        try {
-            const fd = new FormData();
-            fd.append('email', finalData.email);
-            fd.append('password', finalData.password);
-            fd.append('companyName', finalData.companyName);
-            fd.append('companyUrl', finalData.companyUrl);
-            fd.append('companyAddress', JSON.stringify({ street: finalData.companyAddress, city: "Anytown", country: "USA" }));
-            fd.append('phoneNumbers', JSON.stringify([`${finalData.countryCode} ${finalData.phoneNumber}`]));
-            fd.append('socialProfiles', JSON.stringify({ linkedin1: finalData.linkedin1, linkedin2: finalData.linkedin2, facebook: finalData.facebook }));
+  const handleFiles = (files) => {
+    const fileArray = Array.from(files);
+    setValue('documents', fileArray); // For react-hook-form
+    setSelectedFiles(fileArray); // For UI display
+  };
 
-            if (finalData.companyLogo?.length > 0) {
-                fd.append('companyLogo', finalData.companyLogo[0]);
-            }
-            if (finalData.documents?.length > 0) {
-                for (const doc of finalData.documents) {
-                    fd.append('documents', doc);
-                }
-            }
+  const onDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    handleFiles(e.dataTransfer.files);
+  };
 
-            const { error: functionError } = await supabase.functions.invoke('company-register', {
-                body: fd,
-            });
+  const onInputChange = (e) => {
+    handleFiles(e.target.files);
+  };
 
-            if (functionError) throw functionError;
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    const toastId = toast.loading('Submitting registration...');
+    const finalData = { ...formData, ...data };
 
-            toast.success('Registration successful! Please check your email to verify your account.', { id: toastId });
+    try {
+      const fd = new FormData();
+      fd.append('email', finalData.email);
+      fd.append('password', finalData.password);
+      fd.append('companyName', finalData.companyName);
+      fd.append('companyUrl', finalData.companyUrl);
+      fd.append('companyAddress', JSON.stringify({
+        street: finalData.companyAddress,
+        city: 'Anytown',
+        country: 'USA',
+      }));
+      fd.append('phoneNumbers', JSON.stringify([
+        `${finalData.countryCode} ${finalData.phoneNumber}`,
+      ]));
+      fd.append('socialProfiles', JSON.stringify({
+        linkedin1: finalData.linkedin1,
+        linkedin2: finalData.linkedin2,
+        facebook: finalData.facebook,
+      }));
 
-        } catch (error) {
-            console.error('Full error details:', error);
-            
-            // *** FIX: Improved error handling logic ***
-            let errorMessage = "An unknown server error occurred.";
-            const functionErrorData = error.context?.data;
+      if (finalData.companyLogo?.length > 0) {
+        fd.append('companyLogo', finalData.companyLogo[0]);
+      }
 
-            if (functionErrorData) {
-                // Check for specific error codes returned from our Edge Function
-                if (functionErrorData.code === 'email_exists') {
-                    errorMessage = "This email address is already registered. Please use a different one.";
-                } else {
-                    // Use the message from the function if it exists
-                    errorMessage = functionErrorData.error || error.message;
-                }
-            } else {
-                errorMessage = error.message;
-            }
-
-            toast.error(errorMessage, { id: toastId, duration: 6000 });
-        } finally {
-            setIsSubmitting(false);
+      if (data.documents?.length > 0) {
+        for (const doc of data.documents) {
+          fd.append('documents', doc);
         }
-    };
+      }
 
-    return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* The JSX for the form remains exactly the same */}
-            <h1 className="text-3xl font-bold text-center" style={{ color: 'var(--color-text-primary)' }}>Verify your company</h1>
-            <p className="text-center" style={{ color: 'var(--color-text-secondary)' }}>Upload documents to verify your company's legitimacy...</p>
-            
-            <div className="w-full p-8 border-2 border-dashed rounded-lg text-center" style={{ borderColor: 'var(--color-input)' }}>
-                <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Upload documents</h3>
-                <p style={{ color: 'var(--color-text-secondary)' }} className="mt-2">Drag and drop or browse to upload...</p>
-                <p className="text-xs text-gray-400 mt-1">Accepted formats: PDF, JPG, PNG. Maximum file size: 10MB.</p>
-                <input 
-                    id="documents" 
-                    type="file" 
-                    {...register('documents')} 
-                    multiple 
-                    className="mt-4"
-                />
-                {errors.documents && <p className="text-red-500 text-xs mt-1">{errors.documents.message}</p>}
-            </div>
+      const { error: functionError } = await supabase.functions.invoke('company-register', {
+        body: fd,
+      });
 
-            <div className="flex justify-between items-center">
-                <button type="button" onClick={prevStep} style={{ color: 'var(--color-text-secondary)' }} className="font-medium hover:underline" disabled={isSubmitting}>Back</button>
-                <button type="submit" style={{ backgroundColor: 'var(--color-button-primary)', color: 'var(--color-button-text)' }} className="font-bold py-3 px-8 rounded-lg" disabled={isSubmitting}>
-                    {isSubmitting ? 'Submitting...' : 'Complete registration'}
-                </button>
-            </div>
-        </form>
-    );
+      if (functionError) throw functionError;
+
+      toast.success('Registration successful! Please check your email.', { id: toastId });
+      navigate('/login');
+    } catch (error) {
+      console.error('Full error details:', error);
+      let msg = error.message || 'Unexpected error.';
+      toast.error(msg, { id: toastId });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <h1 className="text-3xl font-bold text-text-primary text-center">
+        Verify Your Company
+      </h1>
+      <p className="text-center text-text-secondary">
+        Upload documents to verify your company’s legitimacy.
+      </p>
+
+      <div
+        className={`w-full p-8 border-2 border-dashed rounded-lg text-center space-y-3 bg-input cursor-pointer transition
+          ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}
+        onClick={() => fileInputRef.current?.click()}
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragging(true);
+        }}
+        onDragLeave={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDragging(false);
+        }}
+        onDrop={onDrop}
+      >
+        <h3 className="text-lg font-semibold text-text-primary">Upload Documents</h3>
+        <p className="text-text-secondary">Drag and drop or click to browse</p>
+        <p className="text-xs text-gray-400">Accepted: PDF · Max size: 10MB</p>
+
+        <input
+          id="documents"
+          type="file"
+          {...register('documents')}
+          ref={fileInputRef}
+          onChange={onInputChange}
+          multiple
+          className="hidden"
+        />
+        {errors.documents && (
+          <p className="text-red-500 text-xs mt-1">{errors.documents.message}</p>
+        )}
+
+        {/* ✅ Display selected file names */}
+        {selectedFiles.length > 0 && (
+          <div className="mt-4 text-sm text-text-primary text-left">
+            <strong>Selected Files:</strong>
+            <ul className="list-disc list-inside mt-1">
+              {selectedFiles.map((file, idx) => (
+                <li key={idx}>{file.name}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <div className="flex justify-between items-center pt-4">
+        <button
+          type="button"
+          onClick={prevStep}
+          disabled={isSubmitting}
+          className="border  border-button-primary hover:bg-button-primary  text-button-text px-6 py-3 rounded"
+        >
+          ← Back
+        </button>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="py-3 px-8 bg-button-primary text-white text-sm font-semibold rounded hover:bg-btn-primary-hover transition disabled:opacity-50"
+        >
+          {isSubmitting ? 'Submitting…' : 'Complete Registration'}
+        </button>
+      </div>
+    </form>
+  );
 };
 
 export default CompanyStep4;
-
-
-
