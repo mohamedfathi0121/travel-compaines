@@ -148,11 +148,20 @@ export default function TripFormStep2() {
             </div>
           </div>
 
-          <div className="flex justify-end mt-10">
-            <NextButton type="submit" disabled={uploading}>
-              {uploading ? "Uploading..." : "Next"}
-            </NextButton>
-          </div>
+        <div className="flex justify-between mt-10">
+  <button
+    type="button"
+    onClick={() => navigate("/create-trip/step1")}
+    className="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300"
+  >
+    Back
+  </button>
+
+  <NextButton type="submit" disabled={uploading}>
+    {uploading ? "Uploading..." : "Next"}
+  </NextButton>
+</div>
+
         </form>
       </div>
     </>

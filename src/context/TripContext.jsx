@@ -1,4 +1,4 @@
-// src/context/TripContext.js
+
 import { createContext, useContext, useState } from "react";
 import { id } from "zod/v4/locales";
 
@@ -36,3 +36,15 @@ priceTriple: "",
 };
 
 export const useTrip = () => useContext(TripContext);
+
+
+
+
+
+
+
+
+
+
+
+

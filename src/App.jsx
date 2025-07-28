@@ -18,12 +18,13 @@ import CreateTrip from "./pages/CreateTrip";
 import CompanyProfilePage from "./pages/CompanyProfilePage";
 import TripFormStep5 from "./components/repost-trip/step5";
 import TripFormStep6 from "./components/repost-trip/step6";
+
 function App() {
   return (
     <>
       <AuthProvider>
-        <TripProvider>
-          <BrowserRouter>
+        <BrowserRouter>
+          <TripProvider>
             <Routes>
               <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />
@@ -31,6 +32,7 @@ function App() {
                 <Route path="register" element={<CompanyRegisterPage />} />
                 <Route path="trips" element={<Trips />} />
                 <Route path="profile" element={<CompanyProfilePage />} />
+                
                 <Route path="create-trip" element={<CreateTrip />}>
                   <Route path="step1" element={<TripFormStep1 />} />
                   <Route path="step2" element={<TripFormStep2 />} />
@@ -43,11 +45,11 @@ function App() {
                 </Route>
               </Route>
             </Routes>
-          </BrowserRouter>
-        </TripProvider>
+          </TripProvider>
+        </BrowserRouter>
       </AuthProvider>
 
-      <Toaster
+        <Toaster
         position="top-center"
         toastOptions={{
           className: "",

@@ -81,7 +81,14 @@ export default function TripFormStep3() {
             )}
           </div>
 
-          <div className="md:col-span-2 flex justify-end mt-10">
+           <div className="flex justify-between mt-10">
+  <button
+    type="button"
+    onClick={() => navigate("/create-trip/step2")}
+    className="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300"
+  >
+    Back
+  </button>
             <NextButton type="submit">Next</NextButton>
           </div>
         </form>
