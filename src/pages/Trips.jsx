@@ -39,7 +39,7 @@ export default function Trips() {
       const ongoing = [];
       const past = [];
 
-      data.forEach(trip => {
+      data.forEach((trip) => {
         const start = new Date(trip.start_date);
         const end = new Date(trip.end_date);
 
@@ -79,7 +79,7 @@ export default function Trips() {
             Trips
           </h1>
           <div className="flex flex-wrap gap-2 sm:space-x-4 text-sm font-medium border-b border-text-secondary">
-            {tabs.map(tab => (
+            {tabs.map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -104,7 +104,7 @@ export default function Trips() {
             {trips.upcoming.length === 0 ? (
               <p className="text-text-secondary">No upcoming trips found.</p>
             ) : (
-              trips.upcoming.map(trip => (
+              trips.upcoming.map((trip) => (
                 <div
                   key={trip.id}
                   className="flex flex-col sm:flex-row items-start mb-6 sm:space-x-6 border-b border-text-secondary pb-4"
@@ -127,7 +127,7 @@ export default function Trips() {
                     </p>
                     <div className="flex gap-2">
                       <Link
-                        to={`/repost-trip/step5`}
+                        to={`/repost-trip/step5/${trip.baseTripId}`}
                         state={{ baseTripId: trip.baseTripId }}
                         className="bg-button-primary hover:bg-button-primary-hover text-background px-3 py-1 rounded text-sm"
                       >
@@ -164,13 +164,23 @@ export default function Trips() {
                   </tr>
                 </thead>
                 <tbody>
-                  {trips.ongoing.map(trip => (
+                  {trips.ongoing.map((trip) => (
                     <tr
                       key={trip.id}
                       className="text-sm text-text-primary border-t"
                     >
                       <td className="px-4 py-2">{trip.title}</td>
-                      <td className="px-4 py-2">{trip.date}</td>
+                      <td className="px-4 py-2">
+                        <p className="text-sm text-text-secondary mb-2">
+                          {new Date(
+                            trip.date.split(" - ")[0]
+                          ).toLocaleDateString()}{" "}
+                          -{" "}
+                          {new Date(
+                            trip.date.split(" - ")[1]
+                          ).toLocaleDateString()}
+                        </p>
+                      </td>
                       <td className="px-4 py-2">{trip.location}</td>
                     </tr>
                   ))}
@@ -196,13 +206,23 @@ export default function Trips() {
                   </tr>
                 </thead>
                 <tbody>
-                  {trips.past.map(trip => (
+                  {trips.past.map((trip) => (
                     <tr
                       key={trip.id}
                       className="text-sm text-text-primary border-t"
                     >
                       <td className="px-4 py-2">{trip.title}</td>
-                      <td className="px-4 py-2">{trip.date}</td>
+                      <td className="px-4 py-2">
+                        <p className="text-sm text-text-secondary mb-2">
+                          {new Date(
+                            trip.date.split(" - ")[0]
+                          ).toLocaleDateString()}{" "}
+                          -{" "}
+                          {new Date(
+                            trip.date.split(" - ")[1]
+                          ).toLocaleDateString()}
+                        </p>
+                      </td>
                       <td className="px-4 py-2">{trip.location}</td>
                     </tr>
                   ))}

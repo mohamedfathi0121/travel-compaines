@@ -11,16 +11,30 @@ const InputField = ({ label, name, value, onChange, editable }) => (
       value={value}
       onChange={onChange}
       disabled={!editable}
-      className={`mt-1 block w-full px-3 py-2 border rounded ${
+      className={`placeholder-text-text-primary mt-1 block w-full px-3 py-2 border rounded ${
         editable
-          ? "bg-form-input border-text-primary"
-          : "bg-text-secondary border-text-hard-secondary"
+          ? "bg-text-hard-secondary border-text-primary"
+          : "bg-input  border-text-hard-secondary"
       }`}
+      
     />
   </div>
 );
 
 const CompanyProfileForm = ({ formData, onChange, isEditing }) => {
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    onChange({
+      target: {
+        name: "address",
+        value: {
+          ...formData.address,
+          [name]: value,
+        },
+      },
+    });
+  };
+
   return (
     <form className="space-y-2">
       <InputField
@@ -44,13 +58,31 @@ const CompanyProfileForm = ({ formData, onChange, isEditing }) => {
         onChange={onChange}
         editable={isEditing}
       />
+
+      {/* Address Fields */}
+      <div className="text-sm font-medium text-text-primary">Address</div>
       <InputField
-        label="Address"
-        name="address"
-        value={formData.address}
-        onChange={onChange}
+        label="Street"
+        name="street"
+        value={formData.address?.street || ""}
+        onChange={handleAddressChange}
         editable={isEditing}
       />
+      <InputField
+        label="City"
+        name="city"
+        value={formData.address?.city || ""}
+        onChange={handleAddressChange}
+        editable={isEditing}
+      />
+      <InputField
+        label="Country"
+        name="country"
+        value={formData.address?.country || ""}
+        onChange={handleAddressChange}
+        editable={isEditing}
+      />
+
       <InputField
         label="Website URL"
         name="website"
@@ -65,13 +97,7 @@ const CompanyProfileForm = ({ formData, onChange, isEditing }) => {
         onChange={onChange}
         editable={isEditing}
       />
-      <InputField
-        label="Social Profiles"
-        name="social"
-        value={formData.social}
-        onChange={onChange}
-        editable={isEditing}
-      />
+
       <div className="text-sm text-text-primary">
         <p>
           <strong>Status:</strong> {formData.status}
