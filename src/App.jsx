@@ -18,33 +18,38 @@ import CreateTrip from "./pages/CreateTrip";
 import CompanyProfilePage from "./pages/CompanyProfilePage";
 import TripFormStep5 from "./components/repost-trip/step5";
 import TripFormStep6 from "./components/repost-trip/step6";
+import ProtectedRoute from "./routes/ProtectedRoutes";
+
 function App() {
   return (
     <>
       <AuthProvider>
-        <TripProvider>
-          <BrowserRouter>
+        <BrowserRouter>
+          <TripProvider>
             <Routes>
               <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />
                 <Route path="login" element={<Login />} />
                 <Route path="register" element={<CompanyRegisterPage />} />
-                <Route path="trips" element={<Trips />} />
-                <Route path="profile" element={<CompanyProfilePage />} />
-                <Route path="create-trip" element={<CreateTrip />}>
-                  <Route path="step1" element={<TripFormStep1 />} />
-                  <Route path="step2" element={<TripFormStep2 />} />
-                  <Route path="step3" element={<TripFormStep3 />} />
-                  <Route path="step4" element={<TripFormStep4 />} />
-                </Route>
-                <Route path="repost-trip" element={<CreateTrip />}>
-                  <Route path="step5" element={<TripFormStep5 />} />
-                  <Route path="step6" element={<TripFormStep6 />} />
+                <Route element={<ProtectedRoute />}>
+                  <Route path="trips" element={<Trips />} />
+                  <Route path="profile" element={<CompanyProfilePage />} />
+
+                  <Route path="create-trip" element={<CreateTrip />}>
+                    <Route path="step1" element={<TripFormStep1 />} />
+                    <Route path="step2" element={<TripFormStep2 />} />
+                    <Route path="step3" element={<TripFormStep3 />} />
+                    <Route path="step4" element={<TripFormStep4 />} />
+                  </Route>
+                  <Route path="repost-trip" element={<CreateTrip />}>
+                    <Route path="step5" element={<TripFormStep5 />} />
+                    <Route path="step6" element={<TripFormStep6 />} />
+                  </Route>
                 </Route>
               </Route>
             </Routes>
-          </BrowserRouter>
-        </TripProvider>
+          </TripProvider>
+        </BrowserRouter>
       </AuthProvider>
 
       <Toaster

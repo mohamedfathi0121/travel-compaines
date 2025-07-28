@@ -21,25 +21,29 @@ export default function DatePickerCalendar({ selectedDate, onDateChange }) {
   return (
     <div className="border border-gray-200 rounded p-4 mt-2 w-fit bg-[var(--color-background)] text-[var(--color-text-primary)]">
       <div className="flex justify-between items-center mb-2">
-        <button
-          className="text-sm text-[var(--color-btn-primary)]"
-          onClick={() =>
-            setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))
-          }
-        >
-          &lt;
-        </button>
+    <button
+  type="button"
+  className="text-sm text-[var(--color-btn-primary)]"
+  onClick={() =>
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))
+  }
+>
+  &lt;
+</button>
+
         <span className="font-medium">
           {currentMonth.toLocaleString('default', { month: 'long' })} {currentMonth.getFullYear()}
         </span>
-        <button
-          className="text-sm text-button-primary"
-          onClick={() =>
-            setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
-          }
-        >
-          &gt;
-        </button>
+      <button
+  type="button"
+  className="text-sm text-button-primary"
+  onClick={() =>
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
+  }
+>
+  &gt;
+</button>
+
       </div>
 
       <div className="grid grid-cols-7 gap-1 text-center text-xs text-[var(--color-text-secondary)] mb-1">

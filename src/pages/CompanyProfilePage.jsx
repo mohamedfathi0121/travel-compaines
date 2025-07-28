@@ -88,6 +88,7 @@ const CompanyProfilePage = () => {
       } catch (e) {
         // If JSON parsing fails, try to extract URL manually
         const match = cleanUrl.match(/\["([^"]+)"/);
+        console.log(e);
         if (match) {
           cleanUrl = match[1];
         }

@@ -132,7 +132,15 @@ export default function TripFormStep4() {
               </span>
             )}
           </div>
-          <div className="flex justify-center pt-4">
+            <div className="flex justify-between mt-10">
+  <button
+    type="button"
+    onClick={() => navigate("/create-trip/step3")}
+    className="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300"
+  >
+    Back
+  </button>
+
             <NextButton type="submit" disabled={isSubmitting || !user?.id}>
               {isSubmitting ? "Submitting..." : "Complete Registration"}
             </NextButton>

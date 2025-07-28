@@ -15,19 +15,19 @@ export default function Trips() {
   useEffect(() => {
     const fetchTrips = async () => {
       const { data, error } = await supabase.from("trip_schedules").select(`
+        id,
+        start_date,
+        end_date,
+        status,
+        location_url,
+        base_trips (
           id,
-          start_date,
-          end_date,
-          status,
-          location_url,
-          base_trips (
-            id,
-            title,
-            description,
-            photo_urls,
-            city
-          )
-        `);
+          title,
+          description,
+          photo_urls,
+          city
+        )
+      `);
 
       if (error) {
         console.error("Error fetching trips:", error.message);
@@ -39,16 +39,23 @@ export default function Trips() {
       const ongoing = [];
       const past = [];
 
-      data.forEach((trip) => {
+      data.forEach(trip => {
         const start = new Date(trip.start_date);
         const end = new Date(trip.end_date);
+
+        const formatDate = (date) =>
+          new Date(date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
 
         const tripData = {
           id: trip.id,
           baseTripId: trip.base_trips?.id,
           title: trip.base_trips?.title || "Untitled",
           subtitle: trip.base_trips?.description || "",
-          date: `${trip.start_date} - ${trip.end_date}`,
+          date: `${formatDate(start)} – ${formatDate(end)}`,
           image: trip.base_trips?.photo_urls?.[0] || "",
           location: trip.base_trips?.city || "Unknown",
         };
@@ -70,16 +77,13 @@ export default function Trips() {
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6 flex justify-center">
-      {/* <Helmet>
-        <title>Trips | Travelr</title>
-      </Helmet> */}
       <div className="w-full max-w-6xl">
         <div className="mb-4">
           <h1 className="text-2xl sm:text-3xl font-semibold mb-2 text-text-primary">
             Trips
           </h1>
           <div className="flex flex-wrap gap-2 sm:space-x-4 text-sm font-medium border-b border-text-secondary">
-            {tabs.map((tab) => (
+            {tabs.map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -104,7 +108,7 @@ export default function Trips() {
             {trips.upcoming.length === 0 ? (
               <p className="text-text-secondary">No upcoming trips found.</p>
             ) : (
-              trips.upcoming.map((trip) => (
+              trips.upcoming.map(trip => (
                 <div
                   key={trip.id}
                   className="flex flex-col sm:flex-row items-start mb-6 sm:space-x-6 border-b border-text-secondary pb-4"
@@ -117,17 +121,14 @@ export default function Trips() {
                       {trip.title}
                     </h3>
                     <p className="text-sm text-text-secondary mb-2">
-                      {new Date(trip.date.split(" - ")[0]).toLocaleDateString()}{" "}
-                      -{" "}
-                      {new Date(trip.date.split(" - ")[1]).toLocaleDateString()}
+                      {trip.date}
                     </p>
-
                     <p className="text-sm text-text-secondary">
                       {trip.location}
                     </p>
                     <div className="flex gap-2">
                       <Link
-                        to={`/repost-trip/step5/${trip.baseTripId}`}
+                        to={`/repost-trip/step5`}
                         state={{ baseTripId: trip.baseTripId }}
                         className="bg-button-primary hover:bg-button-primary-hover text-background px-3 py-1 rounded text-sm"
                       >
@@ -164,23 +165,13 @@ export default function Trips() {
                   </tr>
                 </thead>
                 <tbody>
-                  {trips.ongoing.map((trip) => (
+                  {trips.ongoing.map(trip => (
                     <tr
                       key={trip.id}
                       className="text-sm text-text-primary border-t"
                     >
                       <td className="px-4 py-2">{trip.title}</td>
-                      <td className="px-4 py-2">
-                        <p className="text-sm text-text-secondary mb-2">
-                          {new Date(
-                            trip.date.split(" - ")[0]
-                          ).toLocaleDateString()}{" "}
-                          -{" "}
-                          {new Date(
-                            trip.date.split(" - ")[1]
-                          ).toLocaleDateString()}
-                        </p>
-                      </td>
+                      <td className="px-4 py-2">{trip.date}</td>
                       <td className="px-4 py-2">{trip.location}</td>
                     </tr>
                   ))}
@@ -206,23 +197,13 @@ export default function Trips() {
                   </tr>
                 </thead>
                 <tbody>
-                  {trips.past.map((trip) => (
+                  {trips.past.map(trip => (
                     <tr
                       key={trip.id}
                       className="text-sm text-text-primary border-t"
                     >
                       <td className="px-4 py-2">{trip.title}</td>
-                      <td className="px-4 py-2">
-                        <p className="text-sm text-text-secondary mb-2">
-                          {new Date(
-                            trip.date.split(" - ")[0]
-                          ).toLocaleDateString()}{" "}
-                          -{" "}
-                          {new Date(
-                            trip.date.split(" - ")[1]
-                          ).toLocaleDateString()}
-                        </p>
-                      </td>
+                      <td className="px-4 py-2">{trip.date}</td>
                       <td className="px-4 py-2">{trip.location}</td>
                     </tr>
                   ))}
@@ -232,9 +213,10 @@ export default function Trips() {
           </div>
         )}
       </div>
+
       <Link
         to="/create-trip/step1"
-        className=" fixed bottom-4 right-4 bg-button-primary hover:bg-button-primary-hover shadow-text-secondary hover:shadow-sm text-button-text font-bold py-2 px-4 rounded transition duration-300"
+        className="fixed bottom-4 left-10 bg-button-primary hover:bg-button-primary-hover shadow-text-secondary hover:shadow-sm text-button-text font-bold py-2 px-4 rounded transition duration-300"
       >
         Create Trip
       </Link>
